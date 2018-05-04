@@ -6,8 +6,8 @@ var s = string(make([]rune, 4096))
 
 func BenchmarkStringToRuneArray(b *testing.B) {
 	for i := 0; i < b.N; i++ {
-		rs := []rune(s)
-		for j := 0; j < len(rs); j++ {
+		rr := []rune(s)
+		for _, _ = range rr {
 		}
 	}
 }

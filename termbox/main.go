@@ -2,48 +2,34 @@ package main
 
 import (
 	"fmt"
-	"time"
 
-	"github.com/ivoeditor/core"
-	"github.com/ivoeditor/graphics"
-	"github.com/ivoeditor/loop"
-	"github.com/ivoeditor/termbox"
+	termbox "github.com/nsf/termbox-go"
 )
 
-type module struct {
-	rendered bool
-	cols     int
-	rows     int
-}
-
-func (m *module) Send(e core.Event) {
-	if e, ok := e.(graphics.Resize); ok {
-		m.cols = e.Cols
-		m.rows = e.Rows
-		return
-	}
-	fmt.Println(e)
-}
-
-func (m *module) Recv() core.Event {
-	if !m.rendered {
-		m.rendered = true
-		for m.cols == 0 || m.rows == 0 {
-		}
-		cells := graphics.NewCells(m.cols, m.rows)
-		return graphics.Render{
-			Cells: cells,
-		}
-	}
-	time.Sleep(1 * time.Second)
-	return loop.Close{}
-}
-
 func main() {
-	module := &module{}
-	termbox := &termbox.Module{
-		Module: module,
+	if err := termbox.Init(); err != nil {
+		panic(err)
 	}
-	termbox.Send(loop.Init{})
-	fmt.Println(termbox.Recv())
+	defer termbox.Close()
+
+	termbox.SetInputMode(termbox.InputEsc | termbox.InputMouse)
+
+	for {
+		switch ev := termbox.PollEvent(); ev.Type {
+		case termbox.EventKey:
+			if ev.Ch == 0 {
+				fmt.Println("special key: ", ev.Key)
+				break
+			}
+
+			fmt.Println("key: ", string(ev.Ch), ev.Mod)
+
+			if ev.Ch == 'q' {
+				return
+			}
+
+		case termbox.EventMouse:
+			fmt.Println("mouse: ", ev.MouseX, ev.MouseY)
+		}
+	}
 }

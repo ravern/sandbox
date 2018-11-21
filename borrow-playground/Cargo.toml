@@ -1,0 +1,7 @@
+[package]
+name = "borrow-playground"
+version = "0.1.0"
+authors = ["Ravern Koh <ravernkoh@gmail.com>"]
+edition = "2018"
+
+[dependencies]

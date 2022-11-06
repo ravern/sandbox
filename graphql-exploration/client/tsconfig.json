@@ -5,8 +5,10 @@
     ],
     "outDir": "dist",
     "lib": [
-      "es2020"
+      "es2020",
+      "DOM"
     ],
+    "jsx": "react",
     "target": "es2020",
     "module": "esnext",
     "moduleResolution": "node",

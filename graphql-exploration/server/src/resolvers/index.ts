@@ -1,69 +1,10 @@
 import { ApolloServerErrorCode } from '@apollo/server/errors';
 import { GraphQLError } from 'graphql';
 
-import db, { CommentType, PostType, UserType } from '../db';
+import db, { BookmarkType, CommentType, PostType, UserType } from '../db';
 import { Resolvers } from '../generated/graphql';
-
-function paginatedResolver<P, T>(
-  getObjects: (parent: P) => {
-    [id: string]: T;
-  },
-): (
-  parent: P,
-  args: { limit: number; cursor?: string },
-) => Promise<{ count: number; nextCursor?: string; nodes: T[] }> {
-  return async (
-    parent,
-    { limit, cursor },
-  ): Promise<{ count: number; nextCursor?: string; nodes: T[] }> => {
-    const objects = getObjects(parent);
-    const objectIds = Object.keys(objects);
-
-    if (objectIds.length === 0) {
-      return {
-        count: 0,
-        nextCursor: null,
-        nodes: [],
-      };
-    }
-
-    let currentCursor = cursor;
-    if (currentCursor == null) {
-      [currentCursor] = objectIds;
-    }
-
-    const cursorOffset = objectIds.indexOf(currentCursor);
-    if (cursorOffset === -1) {
-      throw new GraphQLError('Invalid cursor provided', {
-        extensions: {
-          code: ApolloServerErrorCode.BAD_USER_INPUT,
-        },
-      });
-    }
-
-    const nextCursor =
-      cursorOffset + limit >= objectIds.length ? null : objectIds[cursorOffset + limit];
-
-    return {
-      count: objectIds.length,
-      nextCursor,
-      nodes: objectIds.slice(cursorOffset, cursorOffset + limit).map(id => objects[id]),
-    };
-  };
-}
-
-function getObjects<T extends { id: string }>(
-  objects: { [id: string]: T },
-  predicate: (object: T) => boolean,
-): { [id: string]: T } {
-  const filteredObjects = {};
-  Object.values(objects).forEach(object => {
-    if (predicate(object)) {
-      filteredObjects[object.id] = object;
-    }
-  });
-  return filteredObjects;
-}
+import getObjects from './helpers/getObjects';
+import paginatedResolver from './helpers/paginatedResolver';
 
 const resolvers: Resolvers = {
   Query: {
@@ -78,13 +19,46 @@ const resolvers: Resolvers = {
     },
     posts: paginatedResolver<{}, PostType>(() => db.posts),
   },
+  User: {
+    bookmarks: paginatedResolver<UserType, BookmarkType>(user =>
+      getObjects<BookmarkType>(db.bookmarks, bookmark => bookmark.userId === user.id),
+    ),
+    posts: paginatedResolver<UserType, PostType>(user =>
+      getObjects<PostType>(db.posts, post => post.authorId === user.id),
+    ),
+    following: paginatedResolver<UserType, UserType>(user =>
+      getObjects<UserType>(db.users, followedUser => followedUser.followers.includes(user.id)),
+    ),
+    followers: paginatedResolver<UserType, UserType>(user =>
+      getObjects<UserType>(db.users, followingUser => user.followers.includes(followingUser.id)),
+    ),
+  },
   Post: {
+    author: async post => {
+      return db.users[post.authorId];
+    },
     likes: paginatedResolver<PostType, UserType>(post =>
       getObjects<UserType>(db.users, user => post.likes.includes(user.id)),
     ),
     comments: paginatedResolver<PostType, CommentType>(post =>
-      getObjects<CommentType>(db.comments, comment => comment.id === post.id),
+      getObjects<CommentType>(db.comments, comment => comment.postId === post.id),
     ),
+  },
+  Comment: {
+    author: async post => {
+      return db.users[post.authorId];
+    },
+    likes: paginatedResolver<CommentType, UserType>(comment =>
+      getObjects<UserType>(db.users, user => comment.likes.includes(user.id)),
+    ),
+  },
+  Bookmark: {
+    post: async bookmark => {
+      return db.posts[bookmark.postId];
+    },
+    user: async bookmark => {
+      return db.users[bookmark.userId];
+    },
   },
 };
 

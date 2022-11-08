@@ -22,6 +22,7 @@ const typeDefs = gql`
     username: String!
     joinedAt: Date!
     bookmarks(limit: Int!, cursor: String): Bookmarks!
+    posts(limit: Int!, cursor: String): Posts!
     followers(limit: Int!, cursor: String): Users!
     following(limit: Int!, cursor: String): Users!
   }

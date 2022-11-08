@@ -1,0 +1,18 @@
+overwrite: true
+schema: src/typeDefs
+generates:
+  src/generated/graphql.ts:
+    config:
+      useIndexSignature: true
+      maybeValue: 'T | null | undefined'
+      scalars: 
+        ID: string
+        Date: string
+      mappers: 
+        User: ../db#UserType
+        Post: ../db#PostType
+        Comment: ../db#CommentType
+        Bookmark: ../db#BookmarkType
+    plugins:
+      - typescript
+      - typescript-resolvers

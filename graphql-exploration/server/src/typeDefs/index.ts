@@ -4,17 +4,25 @@ const typeDefs = gql`
   scalar Date
 
   type Query {
+    currentUser: User!
+    users: [User!]!
     posts(limit: Int!, cursor: String): Posts!
     post(id: ID!): Post!
   }
 
   type Mutation {
     createPost(input: CreatePostInput!): Post!
+    likePost(input: LikePostInput!): Post!
   }
 
   input CreatePostInput {
     title: String!
     body: String!
+  }
+
+  input LikePostInput {
+    id: ID!
+    like: Boolean!
   }
 
   type User {
@@ -35,6 +43,7 @@ const typeDefs = gql`
     author: User!
     likes(limit: Int!, cursor: String): Users!
     comments(limit: Int!, cursor: String): Comments!
+    isLiked: Boolean!
   }
 
   type Comment {
@@ -44,6 +53,7 @@ const typeDefs = gql`
     author: User!
     post: Post!
     likes(limit: Int!, cursor: String): Users!
+    isLiked: Boolean!
   }
 
   type Bookmark {

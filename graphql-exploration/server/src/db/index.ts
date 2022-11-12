@@ -32,9 +32,9 @@ export type BookmarkType = {
   userId: string;
 };
 
-const userId1 = nanoid();
-const userId2 = nanoid();
-const userId3 = nanoid();
+const userId1 = 'CiNiZMGmFCakOPg0we_Fe';
+const userId2 = 'u7ZvrVaqkfPg9fw0p0hHY';
+const userId3 = 'dBytuEGMVw4JUSXvQFSh3';
 
 const users: { [key: string]: UserType } = {
   [userId1]: {
@@ -108,14 +108,25 @@ const posts: { [key: string]: PostType } = {
   [postId6]: {
     id: postId6,
     title: 'Quisque faucibus venenatis sapien, quis aliquam magna tincidunt at',
-    body: 'Nulla dictum enim ac lorem mollis pellentesque. Etiam et velit sed mauris pellentesque consectetur euismod id sem. Cras sagittis suscipit nisi id scelerisque. Pellentesque hendrerit ipsum vitae sodales maximus. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Aliquam quam arcu, aliquet sit amet rhoncus quis, malesuada hendrerit erat.',
+    body: 'Nulla dictum enim ac lorem mollis pellentesque. Pellentesque hendrerit ipsum vitae sodales maximus. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Aliquam quam arcu, aliquet sit amet rhoncus quis, malesuada hendrerit erat.',
     createdAt: new Date().toISOString(),
     authorId: userId3,
     likes: [userId1, userId2],
   },
 };
 
-const comments: { [key: string]: CommentType } = {};
+const commentId1 = nanoid();
+
+const comments: { [key: string]: CommentType } = {
+  [commentId1]: {
+    id: commentId1,
+    body: 'Etiam et velit sed mauris pellentesque consectetur euismod id sem. Cras sagittis suscipit nisi id scelerisque.',
+    createdAt: new Date().toISOString(),
+    postId: postId1,
+    authorId: userId3,
+    likes: [userId2],
+  },
+};
 
 const bookmarks: { [key: string]: BookmarkType } = {};
 

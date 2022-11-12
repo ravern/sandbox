@@ -18,7 +18,16 @@ async function main(): Promise<void> {
     resolvers,
     plugins: [logRequestsPlugin],
   });
-  const { url } = await startStandaloneServer(server, { listen: { port: 4444 } });
+  const { url } = await startStandaloneServer(server, {
+    listen: { port: 4444 },
+    context: async ({ req }) => {
+      const token = req.headers.authorization;
+      if (token == null) {
+        return {};
+      }
+      return { userId: token };
+    },
+  });
   console.info(`Server listening at ${url}...`);
 }
 

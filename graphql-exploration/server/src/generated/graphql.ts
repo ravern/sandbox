@@ -38,6 +38,7 @@ export type Comment = {
   body: Scalars['String'];
   createdAt: Scalars['Date'];
   id: Scalars['ID'];
+  isLiked: Scalars['Boolean'];
   likes: Users;
   post: Post;
 };
@@ -60,14 +61,25 @@ export type CreatePostInput = {
   title: Scalars['String'];
 };
 
+export type LikePostInput = {
+  id: Scalars['ID'];
+  like: Scalars['Boolean'];
+};
+
 export type Mutation = {
   __typename?: 'Mutation';
   createPost: Post;
+  likePost: Post;
 };
 
 
 export type MutationCreatePostArgs = {
   input: CreatePostInput;
+};
+
+
+export type MutationLikePostArgs = {
+  input: LikePostInput;
 };
 
 export type Post = {
@@ -77,6 +89,7 @@ export type Post = {
   comments: Comments;
   createdAt: Scalars['Date'];
   id: Scalars['ID'];
+  isLiked: Scalars['Boolean'];
   likes: Users;
   title: Scalars['String'];
 };
@@ -102,8 +115,10 @@ export type Posts = {
 
 export type Query = {
   __typename?: 'Query';
+  currentUser: User;
   post: Post;
   posts: Posts;
+  users: Array<User>;
 };
 
 
@@ -124,6 +139,7 @@ export type User = {
   following: Users;
   id: Scalars['ID'];
   joinedAt: Scalars['Date'];
+  posts: Posts;
   username: Scalars['String'];
 };
 
@@ -141,6 +157,12 @@ export type UserFollowersArgs = {
 
 
 export type UserFollowingArgs = {
+  cursor?: InputMaybe<Scalars['String']>;
+  limit: Scalars['Int'];
+};
+
+
+export type UserPostsArgs = {
   cursor?: InputMaybe<Scalars['String']>;
   limit: Scalars['Int'];
 };
@@ -231,6 +253,7 @@ export type ResolversTypes = ResolversObject<{
   Date: ResolverTypeWrapper<Scalars['Date']>;
   ID: ResolverTypeWrapper<Scalars['ID']>;
   Int: ResolverTypeWrapper<Scalars['Int']>;
+  LikePostInput: LikePostInput;
   Mutation: ResolverTypeWrapper<{}>;
   Post: ResolverTypeWrapper<PostType>;
   Posts: ResolverTypeWrapper<Omit<Posts, 'nodes'> & { nodes: Array<ResolversTypes['Post']> }>;
@@ -251,6 +274,7 @@ export type ResolversParentTypes = ResolversObject<{
   Date: Scalars['Date'];
   ID: Scalars['ID'];
   Int: Scalars['Int'];
+  LikePostInput: LikePostInput;
   Mutation: {};
   Post: PostType;
   Posts: Omit<Posts, 'nodes'> & { nodes: Array<ResolversParentTypes['Post']> };
@@ -280,6 +304,7 @@ export type CommentResolvers<ContextType = any, ParentType extends ResolversPare
   body?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   createdAt?: Resolver<ResolversTypes['Date'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  isLiked?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   likes?: Resolver<ResolversTypes['Users'], ParentType, ContextType, RequireFields<CommentLikesArgs, 'limit'>>;
   post?: Resolver<ResolversTypes['Post'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
@@ -298,6 +323,7 @@ export interface DateScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes
 
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = ResolversObject<{
   createPost?: Resolver<ResolversTypes['Post'], ParentType, ContextType, RequireFields<MutationCreatePostArgs, 'input'>>;
+  likePost?: Resolver<ResolversTypes['Post'], ParentType, ContextType, RequireFields<MutationLikePostArgs, 'input'>>;
 }>;
 
 export type PostResolvers<ContextType = any, ParentType extends ResolversParentTypes['Post'] = ResolversParentTypes['Post']> = ResolversObject<{
@@ -306,6 +332,7 @@ export type PostResolvers<ContextType = any, ParentType extends ResolversParentT
   comments?: Resolver<ResolversTypes['Comments'], ParentType, ContextType, RequireFields<PostCommentsArgs, 'limit'>>;
   createdAt?: Resolver<ResolversTypes['Date'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  isLiked?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   likes?: Resolver<ResolversTypes['Users'], ParentType, ContextType, RequireFields<PostLikesArgs, 'limit'>>;
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
@@ -319,8 +346,10 @@ export type PostsResolvers<ContextType = any, ParentType extends ResolversParent
 }>;
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = ResolversObject<{
+  currentUser?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
   post?: Resolver<ResolversTypes['Post'], ParentType, ContextType, RequireFields<QueryPostArgs, 'id'>>;
   posts?: Resolver<ResolversTypes['Posts'], ParentType, ContextType, RequireFields<QueryPostsArgs, 'limit'>>;
+  users?: Resolver<Array<ResolversTypes['User']>, ParentType, ContextType>;
 }>;
 
 export type UserResolvers<ContextType = any, ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']> = ResolversObject<{
@@ -329,6 +358,7 @@ export type UserResolvers<ContextType = any, ParentType extends ResolversParentT
   following?: Resolver<ResolversTypes['Users'], ParentType, ContextType, RequireFields<UserFollowingArgs, 'limit'>>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   joinedAt?: Resolver<ResolversTypes['Date'], ParentType, ContextType>;
+  posts?: Resolver<ResolversTypes['Posts'], ParentType, ContextType, RequireFields<UserPostsArgs, 'limit'>>;
   username?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;

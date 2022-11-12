@@ -1,10 +1,12 @@
 import { gql, useQuery } from "@apollo/client";
-import React, { useCallback } from "react";
-import { Link } from "react-router-dom";
+import React from "react";
 import { HomePage_PostsDocument } from "../../graphql/generated/graphql";
 import useAsyncCallback from "../../hooks/useAsyncCallback";
+import CreatePostForm from "./components/CreatePostForm";
 
-const POSTS_QUERY_LIMIT = 2;
+import PostItem, { Post } from "./components/PostItem";
+
+const POSTS_QUERY_LIMIT = 9;
 
 export const POSTS_QUERY = gql`
   query HomePage_Posts($limit: Int!, $cursor: String) {
@@ -24,6 +26,7 @@ export const POSTS_QUERY = gql`
         comments(limit: 0) {
           count
         }
+        isLiked
       }
     }
   }
@@ -53,18 +56,11 @@ export default function HomePage() {
       <div>
         <ul>
           {data.posts.nodes.map(post => (
-            <li key={post.id}>
-              <h2>{post.title}</h2>
-              <p>{post.body}</p>
-              <p>by {post.author.username} | {post.likes.count} likes | {post.comments.count} comments</p>
-              <p>
-                <button>Like</button>
-                <Link to={`/posts/${post.id}`}>View Comments</Link>
-              </p>
-            </li>
+            <PostItem key={post.id} post={post} />
           ))}
         </ul>
         {data.posts.nextCursor != null && <div><button onClick={handleLoadMoreClick}>Load More</button></div>}
+        <CreatePostForm />
       </div>
     );
   } else {

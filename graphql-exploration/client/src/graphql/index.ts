@@ -1,4 +1,22 @@
-import { ApolloClient, InMemoryCache } from "@apollo/client";
+import { ApolloClient, createHttpLink, InMemoryCache } from '@apollo/client';
+import { setContext } from '@apollo/client/link/context';
+
+const httpLink = createHttpLink({
+  uri: 'http://localhost:4444',
+});
+
+const authLink = setContext((_, { headers }) => {
+  const token = localStorage.getItem('token');
+  if (token == null) {
+    return headers;
+  }
+  return {
+    headers: {
+      ...headers,
+      authorization: token ? `${token}` : "",
+    }
+  }
+});
 
 const cache = new InMemoryCache({
   typePolicies: {
@@ -7,7 +25,6 @@ const cache = new InMemoryCache({
         posts: {
           keyArgs: false,
           merge({ nodes: existingNodes = [] } = {}, { count, nextCursor, nodes: incomingNodes }) {
-            console.log("merge!", existingNodes, incomingNodes);
             return {
               count,
               nextCursor,
@@ -21,7 +38,7 @@ const cache = new InMemoryCache({
 });
 
 const client = new ApolloClient({
-  uri: 'http://localhost:4444',
+  link: authLink.concat(httpLink),
   cache,
 });
 

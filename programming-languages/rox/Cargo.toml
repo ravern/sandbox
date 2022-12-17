@@ -1,0 +1,10 @@
+[package]
+name = "rox"
+version = "0.1.0"
+edition = "2018"
+
+[dependencies]
+array-init = "2.0"
+internship = "0.6.0"
+rustyline = "8.2"
+thiserror = "1.0"

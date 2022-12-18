@@ -1,0 +1,19 @@
+<!doctype html>
+<head>
+    <title>Stats</title>
+</head>
+<body>
+    <h1>Stats</h1>
+    <hr />
+    <p>{{ get_miss_percentage }}% of gets missed the cache</p>
+    <hr />
+    <p>{{ memory_percentage }}% of memcached memory used</p>
+    <hr />
+    <p>
+    {% for key, value in stats.iteritems() %}
+        {{ key }}: {{ value }}<br />
+    {% endfor %}
+    </p>
+    <hr />
+</body>
+</html>

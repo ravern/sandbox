@@ -1,0 +1,16 @@
+VAGRANTFILE_API_VERSION = "2"
+
+Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+  config.vm.box = "infrac/devops-test-vm"
+  
+  config.vm.network :forwarded_port, guest: 80, host: 8080    # Apache HTTP
+  config.vm.network :forwarded_port, guest: 443, host: 8443   # Apache HTTPS
+  config.vm.network :forwarded_port, guest: 5000, host: 5000  # Flask debug server
+  
+  config.vm.provision "file", source: "files/site.conf", destination: "/tmp/site.conf"
+  config.vm.provision "file", source: "files/crontab", destination: "/tmp/crontab"
+  config.vm.provision "file", source: "files/app.py", destination: "/tmp/app.py"
+  config.vm.provision "file", source: "files/app.html.j2", destination: "/tmp/app.html.j2"
+
+  config.vm.provision "shell", path: "files/provision.sh"
+end

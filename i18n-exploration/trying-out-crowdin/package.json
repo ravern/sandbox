@@ -1,0 +1,19 @@
+{
+  "name": "trying-out-crowdin",
+  "version": "0.0.1",
+  "main": "src/index.html",
+  "repository": "https://github.com/ravernkoh/trying-out-crowdin",
+  "author": "Ravern Koh <ravern@taskade.com>",
+  "private": true,
+  "scripts": {
+    "watch": "parcel src/index.html"
+  },
+  "dependencies": {
+    "react": "^16.3.0",
+    "react-dom": "^16.11.0",
+    "react-intl": "^3.4.0"
+  },
+  "devDependencies": {
+    "parcel": "^1.12.4"
+  }
+}

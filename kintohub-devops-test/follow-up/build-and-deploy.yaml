@@ -1,0 +1,86 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Workflow
+metadata:
+  generateName: devops-test-
+spec:
+  entrypoint: build-and-deploy-example
+  templates:
+  - name: build-and-deploy-example
+    steps:
+      - - name: build-example
+          template: build-example
+      - - name: deploy-example
+          template: deploy-example
+  - name: build-example
+    inputs:
+      artifacts:
+      - name: node-examples-source
+        path: /app
+        git:
+          repo: https://github.com/kintohub/node-examples.git
+          revision: "master"
+    container:
+      image: docker:17.10
+      command: [sh, -c]
+      args: 
+      - |
+          until docker ps; do sleep 3; done;
+          docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
+          cd app/
+          docker build -t ravernkoh/kintohub-devops-test:latest .
+          docker push ravernkoh/kintohub-devops-test:latest
+      env:
+      - name: DOCKER_HOST
+        value: 127.0.0.1
+      - name: DOCKER_USERNAME
+        valueFrom:
+          secretKeyRef:
+            name: docker-username
+            key: docker-username
+      - name: DOCKER_PASSWORD
+        valueFrom:
+          secretKeyRef:
+            name: docker-password
+            key: docker-password
+    sidecars:
+    - name: dind
+      image: docker:17.10-dind
+      securityContext:
+        privileged: true
+      mirrorVolumeMounts: true
+  - name: deploy-example
+    resource:
+      action: create
+      manifest: |
+        apiVersion: apps/v1
+        kind: Deployment
+        metadata:
+          name: node-examples-deployment
+        spec:
+          selector:
+            matchLabels:
+              app: node-examples
+          replicas: 1
+          template:
+            metadata:
+              labels:
+                app: node-examples
+            spec:
+              containers: 
+              - name: node-examples
+                image: ravernkoh/kintohub-devops-test:latest
+                ports:
+                - containerPort: 80
+        ---
+        apiVersion: v1
+        kind: Service
+        metadata:
+          name: node-examples-service
+        spec:
+          selector:
+            app: node-examples
+          type: NodePort
+          ports:
+          - protocol: TCP
+            port: 80
+            nodePort: 30203

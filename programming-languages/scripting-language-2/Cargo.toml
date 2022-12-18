@@ -1,0 +1,12 @@
+[package]
+name = "zuko"
+version = "0.1.0"
+authors = ["Ravern Koh <ravernkoh@gmail.com>"]
+edition = "2018"
+
+[dependencies]
+clap = { version = "2.32", default-features = false, features = ["suggestions"] }
+failure = "0.1.2"
+fern = "0.5.6"
+log = "0.4"
+maplit = "1.0.1"

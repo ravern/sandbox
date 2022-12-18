@@ -1,0 +1,6 @@
+{
+    "src": "src",
+    "originalLanguage": "en",
+    "targetLanguages": ["zh", "es"],
+    "name": "trying-out"
+}

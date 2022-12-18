@@ -1,0 +1,28 @@
+program
+  : expression
+
+expression
+  : logical_operation
+  | IDENTIFIER [ ASSIGN expression ]
+
+logical_operation
+  : add_operation { ( AND | OR ) add_operation }
+
+add_operation
+  : multiply_operation { ( ADD | SUBTRACT ) multiply_operation }
+
+multiply_operation
+  : power_operation { ( MULTIPLY | DIVIDE ) power_operation }
+
+power_operation
+  : unary_operation [ POWER power_operation ]
+
+unary_operation
+  : term
+  | ( SUBTRACT | NOT ) unary_operation
+
+term
+  : IDENTIFIER
+  | NUMBER
+  | LEFT_PAREN expression RIGHT_PAREN
+

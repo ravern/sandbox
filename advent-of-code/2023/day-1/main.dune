@@ -1,0 +1,91 @@
+let Std = import("./std.dune");
+
+let DIGITS = [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9",
+    "one",
+    "two",
+    "three",
+    "four",
+    "five",
+    "six",
+    "seven",
+    "eight",
+    "nine",
+];
+
+let DIGITS_REVERSED = List.map(DIGITS, (digit) -> String.join(List.reverse(String.split(digit, "")), ""));
+
+let DIGIT_TO_INT = {
+    ["1"]: 1,
+    ["2"]: 2,
+    ["3"]: 3,
+    ["4"]: 4,
+    ["5"]: 5,
+    ["6"]: 6,
+    ["7"]: 7,
+    ["8"]: 8,
+    ["9"]: 9,
+    one: 1,
+    two: 2,
+    three: 3,
+    four: 4,
+    five: 5,
+    six: 6,
+    seven: 7,
+    eight: 8,
+    nine: 9,
+};
+
+let find_first_digit = (digits, string) -> {
+    List.reduce(digits, nil, (result, digit) -> {
+        let index = String.index(string, digit);
+        if result == nil {
+            if index == nil {
+                nil
+            } else {
+                [digit, index]
+            }
+        } else {
+            if index == nil {
+                result
+            } else {
+                let cur_digit = result[0];
+                let cur_index = result[1];
+                if index < cur_index {
+                    [digit, index]
+                } else {
+                    [cur_digit, cur_index]
+                }
+            }
+        }
+    })
+};
+
+let find_value = (line) -> {
+    let chars = String.split(line, "");
+    let first_result = find_first_digit(DIGITS, line);
+    let first_digit = first_result[0];
+
+    let line_reversed = String.join(List.reverse(String.split(line, "")), "");
+    let last_result = find_first_digit(DIGITS_REVERSED, line_reversed);
+    let last_digit = String.join(List.reverse(String.split(last_result[0], "")), "");
+
+    (DIGIT_TO_INT[first_digit] * 10) + DIGIT_TO_INT[last_digit]
+};
+
+let main = () -> {
+    let content = File.read_all("./input");
+    let lines = String.split(content, "\n");
+    let values = List.map(lines, find_value);
+    List.sum(values)
+};
+
+debug(main())

@@ -1,0 +1,14 @@
+List.sum = (list) -> {
+    List.reduce(list, 0, (result, item) -> result + item)
+};
+
+List.contains = (list, item) -> {
+    for cur_item in list {
+        if cur_item == item {
+            return true;
+        }
+    }
+    false
+};
+
+{}

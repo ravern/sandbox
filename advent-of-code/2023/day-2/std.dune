@@ -1,0 +1,33 @@
+List.sum = (self) -> {
+    List.reduce(self, 0, (result, item) -> result + item)
+};
+
+List.contains = (self, item) -> {
+    for cur_item in self {
+        if cur_item == item {
+            return true;
+        }
+    }
+    false
+};
+
+String.trim = (self) -> {
+    let chars = String.split(self, "");
+    let length = List.length(chars);
+
+    let WHITESPACE = [" "];
+
+    let start = 0;
+    while List.contains(WHITESPACE, chars[start]) {
+        start = start + 1;
+    }
+
+    let end = length;
+    while List.contains(WHITESPACE, chars[end - 1]) {
+        end = end - 1;
+    }
+
+    String.join(List.slice(chars, start, end), "") 
+};
+
+{}

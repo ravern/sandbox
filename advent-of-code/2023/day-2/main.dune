@@ -1,0 +1,51 @@
+let Std = import("./std.dune");
+
+let MAX_BALLS = {
+    red: 12,
+    green: 13,
+    blue: 14,
+};
+
+let get_game_id = (line) -> {
+    let components = String.split(line, ":");
+    let game_id = Int.parse(String.split(components[0], " ")[1]);
+    let statements = List.map(String.split(String.trim(components[1]), ";"), String.trim);
+    let cases = List.map(statements, (statement) -> List.map(String.split(String.trim(statement), ","), (component) -> String.split(String.trim(component), " ")));
+    for components in cases {
+        for component in components {
+            if Int.parse(component[0]) > MAX_BALLS[component[1]] {
+                return 0;
+            }
+        }
+    }
+    game_id
+};
+
+let get_game_power = (line) -> {
+    let max_balls = {
+        red: -1,
+        green: -1,
+        blue: -1,
+    };
+    let components = String.split(line, ":");
+    let statements = List.map(String.split(String.trim(components[1]), ";"), String.trim);
+    let cases = List.map(statements, (statement) -> List.map(String.split(String.trim(statement), ","), (component) -> String.split(String.trim(component), " ")));
+    for components in cases {
+        for component in components {
+            let balls = Int.parse(component[0]);
+            if balls > max_balls[component[1]] {
+                max_balls[component[1]] = balls;
+            }
+        }
+    }
+    max_balls.red * max_balls.green * max_balls.blue
+};
+
+let main = () -> {
+    let content = File.read_all("./input");
+    let lines = String.split(content, "\n");
+    let game_powers = List.map(lines, get_game_power);
+    debug(List.sum(game_powers));
+};
+
+main();

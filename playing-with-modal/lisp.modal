@@ -1,0 +1,17 @@
+<> (car ((?x) (?l))) (?x)
+<> (car ?a) (nil)
+
+<> (cdr ((?x) (?l))) (?l)
+<> (cdr ?a) (nil)
+
+<> (cons (?x) (?l)) ((?x) (?l))
+
+<> (if (nil) (?t) (?f)) (?f)
+<> (if (?c) (?t) (?f)) (?t)
+
+<> (eq (?x) (?x)) (t)
+<> (eq (?x) (?y)) (nil)
+
+<> (quote (?s)) (?s) <--- there's some kind of bug here? it returns ((eq)(nil)) for some reason
+
+(quote ((eq) (nil)))

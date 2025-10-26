@@ -37,13 +37,7 @@ impl Runtime {
             };
             let mut fut = task.fut.lock().unwrap();
             let waker = task.waker();
-            if fut
-                .as_mut()
-                .poll(&mut Context::from_waker(&waker))
-                .is_pending()
-            {
-                waker.wake();
-            }
+            let _ = fut.as_mut().poll(&mut Context::from_waker(&waker));
         }
     }
 }

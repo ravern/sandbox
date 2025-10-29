@@ -1,0 +1,6 @@
+[project]
+name = "mlc-ai-course"
+version = "0.1.0"
+description = "Studying the mlc.ai course"
+requires-python = ">=3.13"
+dependencies = []

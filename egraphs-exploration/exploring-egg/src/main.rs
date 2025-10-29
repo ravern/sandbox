@@ -1,3 +1,5 @@
+mod tutorial;
+
 fn main() {
-    println!("Hello, world!");
+    tutorial::run();
 }

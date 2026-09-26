@@ -14,3 +14,11 @@ import LeanPlayground.E10_InductiveExtras
 import LeanPlayground.E11_TypeClasses
 import LeanPlayground.E12_Recursion
 import LeanPlayground.E13_ExpressionOptimizer
+import LeanPlayground.E14_ListTransformations
+import LeanPlayground.E15_Palindromes
+import LeanPlayground.E16_Subsequences
+import LeanPlayground.E17_BinaryNumbers
+import LeanPlayground.E18_Cantor
+import LeanPlayground.E19_VerifiedSort
+import LeanPlayground.E20_StackCompiler
+import LeanPlayground.E21_TypeSafety

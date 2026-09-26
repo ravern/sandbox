@@ -1,33 +1,55 @@
 -- Chapter 3, exercises 18–25: classical propositional logic.
--- Try `classical` inside a proof when you need to split on an arbitrary Prop.
+-- In E01 every branch followed from evidence you already had. Here you may
+-- need to decide an arbitrary proposition even when no proof is supplied.
+-- Stay in term style: `Classical.em p` has type `p ∨ ¬p`. Match on that
+-- result to get a branch with `hp : p` and one with `hnp : ¬p`.
 -- The final exercise is constructive: solve it without `classical`.
 -- Source: https://lean-lang.org/theorem_proving_in_lean4/Propositions-and-Proofs/#exercises
 
 variable (p q r : Prop)
 
--- 18–24: the book's classical exercises, in its original order.
-example : (p → q ∨ r) → ((p → q) ∨ (p → r)) := by
+-- 18. You must choose whether to return a `p → q` or a `p → r` function.
+-- Match on `Classical.em p`. If p is false, either function is vacuous;
+-- if p is true, apply the given function and inspect its Or result.
+example : (p → q ∨ r) → ((p → q) ∨ (p → r)) :=
   sorry
 
-example : ¬(p ∧ q) → ¬p ∨ ¬q := by
+-- 19. To produce `¬p ∨ ¬q`, match on `Classical.em p`.
+-- In the ¬p branch you are done; in the p branch, any proof of q would
+-- build the forbidden `p ∧ q`, so you can prove ¬q.
+example : ¬(p ∧ q) → ¬p ∨ ¬q :=
   sorry
 
-example : ¬(p → q) → p ∧ ¬q := by
+-- 20. The hypothesis says that every proposed function `p → q` fails.
+-- If p were false, such a function would be easy to make. After showing p,
+-- assume q and use it to make a constant `p → q`, contradicting the hypothesis.
+example : ¬(p → q) → p ∧ ¬q :=
   sorry
 
-example : (p → q) → (¬p ∨ q) := by
+-- 21. Match on `Classical.em p`. If p holds, the implication produces q;
+-- otherwise the `¬p` side of the target Or is ready.
+example : (p → q) → (¬p ∨ q) :=
   sorry
 
-example : (¬q → ¬p) → (p → q) := by
+-- 22. You know the contrapositive and want the forward implication.
+-- Write `fun hp => ...`, then match on `Classical.em q`. The ¬q branch
+-- would give ¬p and contradict hp.
+example : (¬q → ¬p) → (p → q) :=
   sorry
 
-example : p ∨ ¬p := by
+-- 23. This is excluded middle itself. Lean provides exactly this
+-- proposition as the term `Classical.em p`.
+example : p ∨ ¬p :=
   sorry
 
-example : (((p → q) → p) → p) := by
+-- 24. Peirce's law: take a function `(p → q) → p`.
+-- Match on `Classical.em p`. The p branch is immediate; in the ¬p branch, construct
+-- `p → q` from the contradiction and feed it to the function.
+example : (((p → q) → p) → p) :=
   sorry
 
--- 25: an apparent self-negating equivalence cannot hold.
--- Unpack both directions of ↔ and feed one into the other.
-example : ¬(p ↔ ¬p) := by
+-- 25. `p ↔ ¬p` supplies both `p → ¬p` and `¬p → p`.
+-- To prove its negation, assume it and construct `¬p` first: if p held,
+-- the first direction would contradict it. Then use the second direction.
+example : ¬(p ↔ ¬p) :=
   sorry

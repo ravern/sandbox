@@ -2,6 +2,11 @@ name = "LeanPlayground"
 version = "0.1.0"
 defaultTargets = ["leanplayground"]
 
+[[require]]
+name = "lean-fmt"
+git = "https://github.com/jcreinhold/lean-fmt"
+rev = "9e8704afb1ed88a935cbdbf10d735e826b0034b8"
+
 [[lean_lib]]
 name = "LeanPlayground"
 

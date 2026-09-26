@@ -1,0 +1,23 @@
+{
+  "simpleLspClient.formatters": {
+    "lean-fmt": {
+      "cmd": [
+        "${workspaceFolder}/.lake/packages/lean-fmt/.lake/build/bin/lean-fmt",
+        "format",
+        "-",
+        "--stdin-filename",
+        "${file}",
+        "--root",
+        "${workspaceFolder}"
+      ],
+      "filetypes": ["lean4"],
+      "env": {
+        "PATH": "${userHome}/.elan/bin:/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
+      }
+    }
+  },
+  "[lean4]": {
+    "editor.defaultFormatter": "wdomitrz.simple-lsp-client",
+    "editor.formatOnSave": true
+  }
+}

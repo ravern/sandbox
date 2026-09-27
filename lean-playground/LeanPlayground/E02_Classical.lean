@@ -12,7 +12,17 @@ variable (p q r : Prop)
 -- Match on `Classical.em p`. If p is false, either function is vacuous;
 -- if p is true, apply the given function and inspect its Or result.
 example : (p → q ∨ r) → ((p → q) ∨ (p → r)) :=
-  sorry
+  -- fun h => Or.inl (fun hp =>
+  --             match h hp with
+  --             | Or.inl hq => hq
+  --             | Or.inr hr => ???)
+  fun h =>
+  match Classical.em p with
+  | Or.inl hp =>
+    match h hp with
+    | Or.inl hq => Or.inl (fun _ => hq)
+    | Or.inr hr => Or.inr (fun _ => hr)
+  | Or.inr hnp => Or.inl (fun hp => False.elim (hnp hp))
 
 -- 19. To produce `¬p ∨ ¬q`, match on `Classical.em p`.
 -- In the ¬p branch you are done; in the p branch, any proof of q would
@@ -46,7 +56,10 @@ example : p ∨ ¬p :=
 -- Match on `Classical.em p`. The p branch is immediate; in the ¬p branch, construct
 -- `p → q` from the contradiction and feed it to the function.
 example : (((p → q) → p) → p) :=
-  sorry
+  (fun h =>
+    match Classical.em p with
+    | Or.inl hp => hp
+    | Or.inr hnp => h (fun hp => False.elim (hnp hp)))
 
 -- 25. `p ↔ ¬p` supplies both `p → ¬p` and `¬p → p`.
 -- To prove its negation, assume it and construct `¬p` first: if p held,

@@ -10,20 +10,18 @@ variable (α : Type) (p q : α → Prop) (r : Prop)
 
 -- 1. The statement r is independent of x. Unpack the existential;
 -- its second component is already a proof of r.
-example : (∃ x : α, r) → r :=
-  sorry
+example : (∃ x : α, r) → r := fun ⟨_, h⟩ => h
 
 -- 2. The supplied `a : α` is your witness. Build `⟨a, ...⟩` and fill
 -- the remaining r goal with the proof given by the implication.
 -- Without a, α could be empty, so there might be no witness to choose.
-example (a : α) : r → (∃ x : α, r) :=
-  sorry
+example (a : α) : r → (∃ x : α, r) := fun h => ⟨a, h⟩
 
 -- 3. Forward: unpack the witness and its `p x ∧ r`; keep the same x
 -- for the left target and move r to the right. Reverse: unpack the
 -- left existential and combine its p proof with the separate r proof.
 example : (∃ x, p x ∧ r) ↔ (∃ x, p x) ∧ r :=
-  sorry
+  Iff.intro (fun ⟨x, ⟨hp, hr⟩⟩ => And.intro ⟨x, hp⟩ hr) (fun ⟨⟨x, hp⟩, hr⟩ => ⟨x, And.intro hp hr⟩)
 
 -- 4. Forward: unpack x, then inspect whether `p x` or `q x` holds.
 -- Keep x when constructing the appropriate target existential.
@@ -39,7 +37,11 @@ example : (∃ x, p x ∨ q x) ↔ (∃ x, p x) ∨ (∃ x, q x) :=
 -- 5. Forward: an alleged `⟨x, ¬p x⟩` contradicts the universal proof
 -- at x. Reverse: to get p x from "not not p x", use classical reasoning.
 example : (∀ x, p x) ↔ ¬(∃ x, ¬p x) :=
-  sorry
+  Iff.intro (fun hp => fun ⟨x, hnp⟩ => hnp (hp x))
+    (fun hnnp => fun x =>
+      match Classical.em (p x) with
+      | Or.inl hp => hp
+      | Or.inr hnp => False.elim (hnnp ⟨x, hnp⟩))
 
 -- 6. Forward: a witness for p x refutes a claim that every x has ¬p x.
 -- Reverse: classical reasoning turns "there cannot be no witness"

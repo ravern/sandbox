@@ -11,28 +11,28 @@ namespace Chapter04Specifications
 -- 1. "n is even" means there exists a natural number k with n = 2*k.
 -- The witness k is allowed to depend on n. Try starting with `∃ k : Nat,`.
 def even (n : Nat) : Prop :=
-  sorry
+  ∃ k : Nat, n = 2 * k
 
 -- 2. Exclude 0 and 1 explicitly, then describe allowed divisors.
 -- `d ∣ n` means d divides n. Any divisor of a prime must be 1 or n.
 def prime (n : Nat) : Prop :=
-  sorry
+  n ≠ 0 ∧ n ≠ 1 ∧ ∀ d : Nat, d ∣ n -> d = 1 ∨ d = n
 
 -- 3. "Infinitely many" can be stated without a special infinity type:
 -- for each bound b, find a prime n strictly greater than b.
 -- The quantifier order is `∀ b, ∃ n, ...`; reversing it changes the claim.
 def infinitely_many_primes : Prop :=
-  sorry
+  ∀ b : Nat, ∃ n : Nat, n > b ∧ prime n
 
 -- 4. First require `prime n`; then say that *some* k makes n equal
 -- to `2 ^ (2 ^ k) + 1`. This definition may reuse the one above.
 def Fermat_prime (n : Nat) : Prop :=
-  sorry
+  prime n ∧ ∃ k : Nat, n = 2 ^ (2 ^ k) + 1
 
 -- 5. Repeat the pattern of exercise 3, replacing `prime` with
 -- `Fermat_prime`. You are defining a conjecture, not proving it.
 def infinitely_many_Fermat_primes : Prop :=
-  sorry
+  ∀ b : Nat, ∃ n : Nat, n > b ∧ Fermat_prime n
 
 -- 6. Start with `∀ n : Nat, ...`. The precondition is that n is even
 -- and n > 2; the conclusion gives two witnesses a and b that are prime

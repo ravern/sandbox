@@ -13,6 +13,21 @@
 -- `rw [lemma]` rewrites by an equality; `simp` uses registered rewrite
 -- rules automatically. Try explicit steps before compressing a proof.
 
+variable (α : Type) (p q : α → Prop)
+
+example : (∀ x, p x → q x) → (∀ x, p x) → (∀ x, q x) := by
+  intro hpq hp x
+  exact hpq x (hp x)
+
+example : (∀ x, p x) ↔ ¬(∃ x, ¬p x) := by
+  constructor
+  · intro hp ⟨x, hnp⟩
+    exact hnp (hp x)
+  · intro hxnp x
+    apply Classical.byContradiction
+    intro hnp
+    exact hxnp ⟨x, hnp⟩
+
 -- 2. The target is three And components; each component is an Or in
 -- which p appears at a different position. First solve it with several
 -- lines of `constructor`, `left`/`right`, and `exact hp`.

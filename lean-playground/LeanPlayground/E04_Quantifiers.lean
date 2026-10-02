@@ -15,18 +15,20 @@ variable (α : Type) (p q : α → Prop)
 -- Inspect `(h x).1`/`.2` to get the needed proof at each x.
 -- For the reverse direction, apply both universal proofs to the same x.
 example : (∀ x, p x ∧ q x) ↔ (∀ x, p x) ∧ (∀ x, q x) :=
-  sorry
+  Iff.intro (fun h => And.intro (fun x => (h x).1) (fun x => (h x).2))
+    (fun ⟨hp, hq⟩ => (fun x => And.intro (hp x) (hq x)))
 
 -- 1b. Write a function taking the two universal proofs and then x.
 -- The first gives `p x → q x`; the second gives `p x`. Apply one to the other.
-example : (∀ x, p x → q x) → (∀ x, p x) → (∀ x, q x) :=
-  sorry
+example : (∀ x, p x → q x) → (∀ x, p x) → (∀ x, q x) := fun hpq => fun hp => fun x => hpq x (hp x)
 
 -- 1c. The input chooses one property that holds for *every* x.
 -- Match that Or first; only then choose x and inject its proof into
 -- the corresponding side of `p x ∨ q x`.
-example : (∀ x, p x) ∨ (∀ x, q x) → ∀ x, p x ∨ q x :=
-  sorry
+example : (∀ x, p x) ∨ (∀ x, q x) → ∀ x, p x ∨ q x := fun h =>
+  match h with
+  | Or.inl hp => (fun x => Or.inl (hp x))
+  | Or.inr hq => (fun x => Or.inr (hq x))
 
 -- Why no reverse? For α = Bool, let p x mean x = true and q x mean
 -- x = false. Every x satisfies one side, but neither side holds for all x.
@@ -40,15 +42,27 @@ variable (α : Type) (p : α → Prop) (r : Prop)
 -- From `∀ x : α, r`, specialize at a to obtain r. Conversely, since r
 -- does not mention x, the same proof of r works for every x.
 -- The value a matters: an arbitrary type α could otherwise be empty.
-example : α → ((∀ x : α, r) ↔ r) :=
-  sorry
+example : α → ((∀ x : α, r) ↔ r) := fun a => Iff.intro (fun h => h a) (fun h => (fun _ => h))
 
 -- 2b. Backward: if every x satisfies p, choose the left side of each Or;
 -- if r holds, choose the right side for every x. Forward is harder:
 -- match on `Classical.em r`. In the ¬r case,
 -- each `p x ∨ r` must have come from p x.
 example : (∀ x, p x ∨ r) ↔ (∀ x, p x) ∨ r :=
-  sorry
+  Iff.intro
+    (fun h =>
+      match Classical.em r with
+      | Or.inl hr => Or.inr hr
+      | Or.inr hnr =>
+        Or.inl
+          (fun x =>
+            match h x with
+            | Or.inl hp => hp
+            | Or.inr hr => False.elim (hnr hr)))
+    (fun h => fun x =>
+      match h with
+      | Or.inl hp => Or.inl (hp x)
+      | Or.inr hr => Or.inr hr)
 
 -- 2c. In either direction, write functions for r and for x.
 -- The only question is whether the function takes x before or after r;
@@ -68,6 +82,10 @@ variable (shaves : men → men → Prop)
 -- You proved that such an equivalence is impossible in E02's final puzzle;
 -- you can reconstruct that argument here without assuming excluded middle.
 example (h : ∀ x : men, shaves barber x ↔ ¬shaves x x) : False :=
-  sorry
+  match h barber with
+  | Iff.intro hmp hmpr =>
+    let hnp := (fun hp : shaves barber barber => (hmp hp) hp)
+    let hp := hmpr hnp
+    hnp hp
 
 end Barber
